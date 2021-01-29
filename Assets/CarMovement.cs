@@ -7,16 +7,22 @@ public class CarMovement : MonoBehaviour
 
     public Vector3 movement;
 
-    // Start is called before the first frame update
-    void Start()
+    private Vector3 initialPos;
+
+    private void Start()
     {
-        BoxCollider myCollider = GetComponent<BoxCollider>();
-        //myCollider.isTrigger = false;
+        initialPos = transform.localPosition;
     }
 
     // Update is called once per frame
     void Update()
     {
         transform.localPosition += movement * Time.deltaTime;
+    }
+
+    public void ReturnToSpawner()
+    {
+        transform.localPosition = initialPos;
+        gameObject.SetActive(false);
     }
 }

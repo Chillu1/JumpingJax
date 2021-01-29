@@ -84,6 +84,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Portal/Portal10.unity
     guid: a09d73587bff1e34c891c6f2536180c3
   - enabled: 1
+    path: Assets/Scenes/Hop/Frogger.unity
+    guid: ccaa28a63e2282849b368e3f686d7bb9
+  - enabled: 1
     path: Assets/Scenes/GYM.unity
     guid: 020a422bc23997b469410d974acf9023
   - enabled: 1

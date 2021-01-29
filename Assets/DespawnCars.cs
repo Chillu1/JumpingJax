@@ -7,17 +7,18 @@ public class DespawnCars : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        BoxCollider myCollider = GetComponent<BoxCollider>();
+        Collider myCollider = GetComponent<Collider>();
         myCollider.isTrigger = true;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        //if (other.gameObject.GetComponent<CarMovement>())
-        if (other.gameObject.layer == 19)//vehicle layer
+        CarMovement movement = other.gameObject.GetComponent<CarMovement>();
+        if (movement != null)
+        //if (other.gameObject.layer == 19)//vehicle layer
         {
             Debug.Log("Delete Car now");
-            GameObject.Destroy(other.gameObject);
+            movement.ReturnToSpawner();
         }
     }
 }

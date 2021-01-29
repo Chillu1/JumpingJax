@@ -148,8 +148,8 @@ public static class PlayerConstants
 
     // Game Constants
     public static int MainMenuSceneIndex = 0;
-    public static int LevelEditorSceneIndex = 27;
-    public static int CreditsSceneIndex = 28;
+    public static int LevelEditorSceneIndex = 28;
+    public static int CreditsSceneIndex = 29;
 
     public static Vector3 PlayerSpawnOffset = new Vector3(0, 1.1f, 0);
     public static string levelCompletionTimeFormat = "mm':'ss'.'fff";

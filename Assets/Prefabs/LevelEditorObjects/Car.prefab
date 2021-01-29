@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 486011794787695806}
   - component: {fileID: 2300488839772013531}
   - component: {fileID: 4710207007117615293}
-  m_Layer: 19
+  - component: {fileID: 6233825983026040280}
+  m_Layer: 0
   m_Name: Car
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,7 +96,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa474e75fb28172489a61e13ca4c0559, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movement: {x: 0, y: 0, z: -2}
+  movement: {x: 0, y: 0, z: -8}
 --- !u!65 &4710207007117615293
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -109,3 +110,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &6233825983026040280
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 486011794787695807}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
