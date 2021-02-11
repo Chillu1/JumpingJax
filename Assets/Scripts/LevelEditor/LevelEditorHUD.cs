@@ -35,6 +35,7 @@ public class LevelEditorHUD : MonoBehaviour
 
     [Header("Set at Runtime")]
     public GameObject playerInstance;
+    public PlayerMovement playerInstanceMovement;
     public GizmoColor currentGizmoColor;
     public bool isUsingGizmo = false;
     public GameObject currentSelectedObject;
@@ -63,6 +64,8 @@ public class LevelEditorHUD : MonoBehaviour
 
     void Start()
     {
+        playerInstanceMovement = playerInstance.GetComponent<PlayerMovement>();
+
         isInPlayMode = false;
         currentTab = ObjectTypeTab.None;
         prefabButtons = new List<LevelEditorPrefabButton>();
@@ -213,9 +216,12 @@ public class LevelEditorHUD : MonoBehaviour
         requiredViewToggleButton.gameObject.SetActive(!isInPlayMode);
         prefabViewToggleButton.gameObject.SetActive(!isInPlayMode);
 
+        playerInstance.SetActive(isInPlayMode);
 
         if (!isInPlayMode)
         {
+            // LevelEditorPlayer still moves while in Play Mode. This resets the location to where the player is
+            // We could disable movement, but this needs to be done anyways for a seamless transition back to Edit Mode
             transform.parent.position = playerCamera.playerCamera.transform.position;
             transform.parent.rotation = playerCamera.playerCamera.transform.rotation;
         }
@@ -225,18 +231,22 @@ public class LevelEditorHUD : MonoBehaviour
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Confined;
         }
-        playerInstance.SetActive(isInPlayMode);
-
     }
 
     private void SetPlayTestStartingPosition()
     {
         Checkpoint firstCheckpoint = LevelEditorUtils.GetFirstCheckpoint();
-        if(firstCheckpoint != null)
+        if (firstCheckpoint != null)
         {
-            Transform startingTransform = LevelEditorUtils.GetFirstCheckpoint().transform;
+            Transform startingTransform = firstCheckpoint.transform;
+            playerInstanceMovement.controller.enabled = false;
             playerInstance.transform.position =
                 startingTransform.position + PlayerConstants.PlayerSpawnOffset;
+
+            playerInstanceMovement.controller.enabled = true;
+            playerInstanceMovement.velocityToApply = Vector3.zero;
+            Physics.SyncTransforms();
+            playerInstanceMovement.velocityToApply = Vector3.zero;
 
             playerCamera.SetTargetRotation(startingTransform.rotation);
         }

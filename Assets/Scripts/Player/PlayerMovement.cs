@@ -32,13 +32,13 @@ public class PlayerMovement : MonoBehaviour
     {
         velocityToApply = Vector3.zero;
         noClip = false;
+        controller = GetComponent<CharacterController>();
+        playerPortalableController = GetComponent<PlayerPortalableController>();
+        cameraMove = GetComponent<CameraMove>();
     }
 
     private void Start()
     {
-        controller = GetComponent<CharacterController>();
-        playerPortalableController = GetComponent<PlayerPortalableController>();
-        cameraMove = GetComponent<CameraMove>();
         currentLevel = GameManager.GetCurrentLevel();
     }
 
