@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Xml.Schema;
+﻿using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,6 +22,7 @@ public class Inspector : MonoBehaviour
     public InputField yInput;
     public InputField zInput;
     public InputField snapInput;
+    private InputField[] inputFields;
 
     [Header("Set at Runtime")]
     public Transform objectToInspect;
@@ -66,6 +64,8 @@ public class Inspector : MonoBehaviour
         snapInput.onValueChanged.AddListener((value) => SnapChanged(value));
         snapInput.text = "0";
 
+        inputFields = new InputField[] { xInput, yInput, zInput, snapInput };
+
         Clear();
     }
 
@@ -75,7 +75,7 @@ public class Inspector : MonoBehaviour
         {
             return;
         }
-
+        
         levelEditorGizmo.UpdateGizmos();
 
         if (levelEditorHUD.isUsingGizmo)
@@ -84,8 +84,7 @@ public class Inspector : MonoBehaviour
             UpdateInputs();
         }
 
-        HandleKeyboardArrowInput();
-
+        HandleKeyboardInput();
         CheckInspectorCommands();
     }
 
@@ -233,7 +232,14 @@ public class Inspector : MonoBehaviour
         objectToInspect.localScale = newScale;
     }
 
-    private void HandleKeyboardArrowInput()
+    private void HandleKeyboardInput()
+    {
+        HandleManipulationKeyboardInput();
+        HandleManipulationTypeSelectKeyboardInput();
+        HandleSelectAxisKeyboardInput();
+    }
+
+    private void HandleManipulationKeyboardInput()
     {
         Vector3 vectorBeingManipulated = Vector3.zero;  
         switch (manipulationType)
@@ -280,6 +286,57 @@ public class Inspector : MonoBehaviour
             }
         }
         UpdateInputs();
+    }
+
+    private void HandleManipulationTypeSelectKeyboardInput()
+    {
+        if (InputManager.GetModifiedKeyDown(PlayerConstants.LevelEditorSelectPosition))
+        {
+            SetManipulationType(ManipulationType.Position);
+        }
+        else if (InputManager.GetModifiedKeyDown(PlayerConstants.LevelEditorSelectRotation))
+        {
+            SetManipulationType(ManipulationType.Rotation);
+        }
+        else if (InputManager.GetModifiedKeyDown(PlayerConstants.LevelEditorSelectScale))
+        {
+            SetManipulationType(ManipulationType.Scale);
+        }
+    }
+
+    private void HandleSelectAxisKeyboardInput()
+    {
+        if (InputManager.GetKey(PlayerConstants.ModifierKey))
+        {
+            // Prevent a navigation keypress from altering the value of the input field itself
+            SetInputFieldsReadOnly(true);
+
+            if (InputManager.GetKeyDown(PlayerConstants.LevelEditorSelectXAxis))
+            {
+                xInput.Select();
+            }
+            else if (InputManager.GetKeyDown(PlayerConstants.LevelEditorSelectYAxis))
+            {
+                yInput.Select();
+            }
+            else if (InputManager.GetKeyDown(PlayerConstants.LevelEditorSelectZAxis))
+            {
+                zInput.Select();
+            }
+            else if (InputManager.GetKeyDown(PlayerConstants.LevelEditorSelectSnap))
+            {
+                snapInput.Select();
+            }
+        }
+        else
+        {
+            SetInputFieldsReadOnly(false);
+        }
+    }
+
+    private void SetInputFieldsReadOnly(bool isReadOnly)
+    {
+        inputFields.All(x => { x.readOnly = isReadOnly; return true; });
     }
 
     private void SnapChanged(string newSnapValue)

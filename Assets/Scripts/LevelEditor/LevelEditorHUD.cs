@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -154,7 +152,7 @@ public class LevelEditorHUD : MonoBehaviour
 
     private void FocusCamera()
     {
-        if (Input.GetKeyDown(KeyCode.F))
+        if (!InputManager.GetKey(PlayerConstants.ModifierKey) && Input.GetKeyDown(KeyCode.F))
         {
             levelEditorCamera.transform.position = currentSelectedObject.transform.position - (levelEditorCamera.transform.forward * 10);
         }
@@ -162,7 +160,7 @@ public class LevelEditorHUD : MonoBehaviour
 
     private void CheckPlayMode()
     {
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (InputManager.GetModifiedKeyDown(PlayerConstants.LevelEditorPlayTest))
         {
             PlayTest();
         }
@@ -233,10 +231,11 @@ public class LevelEditorHUD : MonoBehaviour
 
     private void SetPlayTestStartingPosition()
     {
-        Transform startingTransform = LevelEditorUtils.GetFirstCheckpoint().transform;
-        if (startingTransform != null)
+        Checkpoint firstCheckpoint = LevelEditorUtils.GetFirstCheckpoint();
+        if(firstCheckpoint != null)
         {
-            playerInstance.transform.position = 
+            Transform startingTransform = LevelEditorUtils.GetFirstCheckpoint().transform;
+            playerInstance.transform.position =
                 startingTransform.position + PlayerConstants.PlayerSpawnOffset;
 
             playerCamera.SetTargetRotation(startingTransform.rotation);
@@ -371,21 +370,31 @@ public class LevelEditorHUD : MonoBehaviour
         if (currentLevel.workshopFilePath != string.Empty && currentLevel.workshopFilePath != null)
         {
             DirectoryInfo fileInfo = new DirectoryInfo(currentLevel.workshopFilePath);
-            string scenePath = fileInfo.EnumerateFiles().First().FullName;
-            filePath = scenePath;
+            try
+            {
+                List<DirectoryInfo> levelDataFolders = fileInfo.EnumerateDirectories().ToList();
+                DirectoryInfo levelDataFolder = levelDataFolders.First();
+                List<FileInfo> levelDataFiles = levelDataFolder.EnumerateFiles("*.json").ToList();
+                FileInfo levelDataFile = levelDataFiles.First();
+                filePath = levelDataFile.FullName;
+            }
+            catch(Exception e)
+            {
+                Debug.LogError($"Could not find any file for workshop folder {fileInfo}. Files may not have been downloaded.\nException\n{e.Message}");
+            }
         }
         else
         {
             if (currentLevel.levelEditorLevelDataPath == string.Empty)
             {
-                Debug.Log($"Trying to load level: {currentLevel.levelName} but it has not been saved");
+                Debug.LogError($"Trying to load level: {currentLevel.levelName} but it has not been saved");
                 return;
             }
 
 
             if (!File.Exists(currentLevel.levelEditorLevelDataPath))
             {
-                Debug.Log($"Trying to load level: {currentLevel.levelName} from {currentLevel.levelEditorLevelDataPath} but the save file has been deleted");
+                Debug.LogError($"Trying to load level: {currentLevel.levelName} from {currentLevel.levelEditorLevelDataPath} but the save file has been deleted");
                 return;
             }
             filePath = currentLevel.levelEditorLevelDataPath;

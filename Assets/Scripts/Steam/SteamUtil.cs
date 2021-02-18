@@ -30,7 +30,7 @@ public class SteamUtil
         }
         catch (System.Exception e)
         {
-            Debug.LogError("Could not connect to steam " + e.Message);
+            Debug.LogWarning("Could not connect to steam " + e.Message);
         }
     }
 
@@ -92,18 +92,5 @@ public class SteamUtil
         dh.texture.name = url;
 
         return dh.texture;
-    }
-
-    public static string GetGhostRunFilePath(Level level)
-    {
-        string folderPath = Path.Combine(Application.persistentDataPath, "GhostRunData");
-        if (!Directory.Exists(folderPath))
-        {
-            Directory.CreateDirectory(folderPath);
-        }
-
-        string filePath = Path.Combine(folderPath, $"{level.levelName}_{SteamClient.SteamId}");
-
-        return filePath;
     }
 }
