@@ -1,5 +1,4 @@
-﻿using UnityEngine.SceneManagement;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class TutorialTriggerGroup : MonoBehaviour
 {
@@ -8,18 +7,10 @@ public class TutorialTriggerGroup : MonoBehaviour
     public InGameUI gameUI;
     public PlayerProgress playerProgress;
 
-    private void OnEnable()
+    private void Start()
     {
-        SceneManager.sceneLoaded += OnNewLevelLoaded;
-    }
-
-    private void OnDisable()
-    {
-        SceneManager.sceneLoaded -= OnNewLevelLoaded;
-    }
-
-    private void OnNewLevelLoaded(Scene scene, LoadSceneMode mode)
-    {
+        playerProgress = GetComponent<PlayerProgress>();
+        gameUI = GetComponentInChildren<InGameUI>(true);
         UpdateTriggers();
     }
 
@@ -28,14 +19,6 @@ public class TutorialTriggerGroup : MonoBehaviour
         triggers = FindObjectsOfType<TutorialTrigger>();
         if (triggers.Length == 0)
         {
-            // No need to search for PlayerProgress or InGameUI if there are no trigger elements.
-            return;
-        }
-        playerProgress = GameObject.FindWithTag(PlayerConstants.PlayerTag).GetComponent<PlayerProgress>();
-        gameUI = playerProgress.GetComponentInChildren<InGameUI>(true);
-        if (playerProgress == null || gameUI == null)
-        {
-            Debug.LogError("Unable to find playerProgress or gameUI");
             return;
         }
 
@@ -53,5 +36,6 @@ public class TutorialTriggerGroup : MonoBehaviour
         {
             trigger.ResetTrigger();
         }
+        gameUI.SetupTutorialTexts(GameManager.GetCurrentLevel().tutorialTexts);
     }
 }

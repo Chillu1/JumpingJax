@@ -47,7 +47,7 @@ public class PlayerMovement : MonoBehaviour
     // All input checking going in Update, so no Input queries are missed
     private void Update()
     {
-        if (ghostCamera.enabled || GameManager.Instance.isLoadingScene)
+        if ((ghostCamera != null && ghostCamera.enabled) || GameManager.Instance.isLoadingScene)
         {
             return;
         }
@@ -411,7 +411,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (velocityToApply.y <= -PlayerConstants.MaxFallSpeed)
         {
-            PlayerSoundEffects.PlaySoundEffect(SoundEffectType.Falling);
+            PlayerSoundEffects.PlaySoundEffect(SoundEffectType.TerminalVelocity);
         }
     }
 

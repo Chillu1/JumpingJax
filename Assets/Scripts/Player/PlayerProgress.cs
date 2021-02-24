@@ -18,6 +18,7 @@ public class PlayerProgress : MonoBehaviour
     private Crosshair crosshair;
     private PortalPair portalPair;
     private Checkpoint firstCheckpoint;
+    private TutorialTriggerGroup tutorialTriggerGroup;
 
     private void Start()
     {
@@ -25,7 +26,8 @@ public class PlayerProgress : MonoBehaviour
         cameraMove = GetComponent<CameraMove>();
         playerGhostRun = GetComponent<PlayerGhostRun>();
         crosshair = GetComponent<Crosshair>();
-        portalPair = GameObject.FindObjectOfType<PortalPair>();
+        portalPair = FindObjectOfType<PortalPair>();
+        tutorialTriggerGroup = GetComponent<TutorialTriggerGroup>();
         Deaths = 0;
         GetFirstCheckpoint();
     }
@@ -71,6 +73,11 @@ public class PlayerProgress : MonoBehaviour
 
     public void HitNewCheckPoint(Checkpoint checkpoint)
     {
+        // Only play the sound on the first time touching the checkpoint, and don't play the sound if it's the final checkpoint as other sounds may play then
+        if (!checkpoint.isCompleted && !checkpoint.isFinalCheckpoint)
+        {
+            PlayerSoundEffects.PlaySoundEffect(SoundEffectType.Checkpoint);
+        }
         checkpoint.SetCompleted();
         currentCheckpoint = checkpoint;
 
@@ -103,6 +110,8 @@ public class PlayerProgress : MonoBehaviour
         playerMovement.controller.enabled = true;
         ++Deaths;
 
+        PlayerSoundEffects.PlaySoundEffect(SoundEffectType.Respawn);
+
         // If the player is restarting at the beginning, reset level
         if (currentCheckpoint.isFirstCheckpoint)
         {
@@ -114,6 +123,7 @@ public class PlayerProgress : MonoBehaviour
             GameManager.RestartLevel();
             playerGhostRun.RestartRun();
             ResetCollectibles();
+            ResetTutorials();
         }
     }
 
@@ -122,7 +132,6 @@ public class PlayerProgress : MonoBehaviour
         playerUI.ToggleOffWinScreen();
         currentCheckpoint = firstCheckpoint;
         ResetCheckpoints();
-        ResetTutorials();
         Respawn();
     }
 
@@ -150,7 +159,6 @@ public class PlayerProgress : MonoBehaviour
 
     private void ResetTutorials()
     {
-        TutorialTriggerGroup group = GameObject.FindObjectOfType<TutorialTriggerGroup>();
-        group.ResetTriggers();
+        tutorialTriggerGroup.ResetTriggers();
     }
 }
