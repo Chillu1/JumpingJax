@@ -253,7 +253,7 @@ public class DeveloperConsole : MonoBehaviour
         }
 
         DateTime now = DateTime.Now;
-        message = string.Format("[{0:H:mm:ss}] {1}\n", now, message);
+        message = now.ToString("o") + message;
 
         _readWriteLock.EnterWriteLock();
         try
