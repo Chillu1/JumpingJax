@@ -25,11 +25,11 @@ public class StatsManager : MonoBehaviour
                 TimeSpan time = TimeSpan.FromSeconds(level.levelSaveData.completionTime);
                 Debug.Log($"Leaderboard found, adding score: {time.ToString(PlayerConstants.levelCompletionTimeFormat)}");
                 Steamworks.Data.LeaderboardUpdate? leaderboardUpdate = await leaderboardValue.SubmitScoreAsync((int)time.TotalMilliseconds); // We can use the return here to show the placement update on the winMenu
-
+                
                 if (leaderboardUpdate.HasValue)
                 {
                     Steamworks.Data.LeaderboardUpdate leaderboardUpdateValue = leaderboardUpdate.Value;
-                    Debug.Log($"Leaderboard Update for {level.levelName}: Changed?: {leaderboardUpdateValue.Changed} rankChange: {leaderboardUpdateValue.RankChange} new Score: {leaderboardUpdateValue.Score}");
+                    Debug.Log($"Leaderboard Update for {level.levelName}: Changed?: {leaderboardUpdateValue.Changed} rankChange(old/new): {leaderboardUpdateValue.RankChange} ({leaderboardUpdateValue.OldGlobalRank}/{leaderboardUpdateValue.NewGlobalRank})  new Score: {leaderboardUpdateValue.Score}");
                 }
                 else
                 {
